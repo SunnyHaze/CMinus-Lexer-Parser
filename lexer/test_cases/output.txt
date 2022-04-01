@@ -1,0 +1,21 @@
+<invalid token>
+# 1	/* A program to perform Euclid's
+# 2	Algorithm to compute gcd. */
+# 3	
+# 4	int gcd (int u, int v)
+# 5	{
+# 6	    if (v == 0)
+# 7	        return u ;
+# 8	    else
+# 9	        return gcd(v,u-u/v*v);
+# 10	    /* u-u/v*v == u mod v */
+# 11	}
+# 12	
+# 13	void main(void)
+# 14	{
+# 15	    int x; int y;
+# 16	    x = input();
+# 17	    y = input();
+# 18	    output(gcd(x,y));
+# 19	}
+# 20	
