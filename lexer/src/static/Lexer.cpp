@@ -178,11 +178,5 @@ void cmlexer::lexing_file(std::ifstream &local_ifs){
             }
             i++; // next为false（刚进行output后则加加）
         }
-    }
-
-
-
-
-
-    
+    }  
 }
