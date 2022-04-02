@@ -6,6 +6,18 @@ std::set<char> oper_start = {
 bool isoperator(char c){
     return oper_start.count(c);
 }
+std::unordered_map<state, std::string> error_map = {
+    {state::unexpected_char, "未知的字符！"},
+    {state::undefined_operator, "无法识别的运算符!"},
+    {state::unexpected_state, "状态机异常，请联系作者debug！"}
+};
+std::string get_error_str(state s){
+    if(error_map.count(s)){
+        return error_map.at(s);
+    }else{
+        return "<invalid error>";
+    }
+}
 
 // 设置输入输出的路径
 void cmlexer::setPath(std::string i, std::string o){
@@ -16,40 +28,12 @@ void cmlexer::setPath(std::string i, std::string o){
         std::cout.rdbuf(ofs.rdbuf());
     }
 }
-    // 从文件中获取下一个字符
-int  cmlexer::getNextChar(){
-    if(linepos >= bufflen){ // 读取新一行
-        lineno++;
-        if(output_redirect){
-            ofs << "#" << lineno << "\t";
-        }else{
-            std::cout << "#" << lineno << "\t";
-        }
-        
-        if(std::getline(ifs, buffer)){ // 能读取到新一行
-            buffer += '\n';
-            bufflen = buffer.size();
-            linepos = 0;
-        }else{       
-            EOF_flag = 1;           // 读不到了，结束
-            return EOF;
-        }
-    }
-    return buffer[linepos++];
-}
-//Todo 功能重构
-
-
-// 回退一个字符 (没有处理段首回退到上一行的问题，不过在此项目中不太影响)
-void cmlexer::ungetNextChar(void){
-    if (!EOF_flag) linepos-- ;
-}
 
 state cmlexer::read_next(char c, bool next){
     if(next){   //后移一位
         linepos++;  // 加位置
     }
-    switch (_s){
+    switch (_s){ // todo :  innumb
     case state::start :{
         if(c == '\0') {
             return _s;
@@ -60,9 +44,6 @@ state cmlexer::read_next(char c, bool next){
             return _s;
         }
         else if(isspace(c)){
-            return _s;
-        }
-        else if(c == '\r'){
             return _s;
         }
         else if(isdigit(c)){
@@ -78,6 +59,8 @@ state cmlexer::read_next(char c, bool next){
             return _s = state::in_iden;
         }else if (c == EOF){
             return _s = state::output;
+        }else{
+            return _s = state::unexpected_char;
         }
     }
     case state::in_oper :{
@@ -91,26 +74,115 @@ state cmlexer::read_next(char c, bool next){
                 return _s = state::in_comm;
             }else{  // 其他状态则正常输出
                 results.emplace_back(new token_operator(oper, lineno, linepos - 1));
-                return state::output;
+                return _s = state::output;
             }
         }else{  // 新读进来的也是运算符 【x=-1】【y<=1】
             auto oper = string2operator(buffer);
             if(oper != operator_type::_null && string2operator(buffer + c) == operator_type::_null){
                 buffer.clear();
-                if(oper == operator_type::_comment){ //解决 【/***】这种注释的问题
-                    return state::in_comm;
-                }else{
-                    results.emplace_back(new token_operator(oper, lineno, linepos - 1));
+                results.emplace_back(new token_operator(oper, lineno, linepos - 1));
+                return _s = state::output;
+            }else if (oper != operator_type::_null && string2operator( buffer + c) != operator_type::_null){
+                if(operator_type::_comment == (string2operator(buffer + c))){
+                    buffer.clear();
+                    return _s = state::in_comm;
                 }
             }
             buffer += c;
             return _s;      // 因为下一个还是运算符，保持运算符不变
         }
+
+    }
+    case state::in_comm:{   
+        if(c == '\n'){
+            linepos = 0;
+            lineno++;
+            return _s;
+        }else if(c == '*'){
+            return _s = state::ex_comm;
+        }else{
+            return _s = state::in_comm;
+        }
+    }
+    case state::ex_comm:{
+        if(c == '/'){
+            return _s = state::start;
+        }else if (c == '\n'){
+            linepos = 0;
+            lineno++;
+        }
+        return _s = state::in_comm;
+    }
+    case state::in_iden:{
+        if(isalpha(c)){
+            buffer += c;
+            return _s;
+        }else{ // 这里需要先检测是否是关键字
+            auto key_type = string2keyword(buffer);
+            if(key_type == keyword_type::_null){
+                // 说明不是关键字，按照标识符处理     
+                results.emplace_back(new token_identifier(buffer, lineno, linepos - 1));
+            }
+            else{
+                // 按照关键字处理
+                results.emplace_back(new token_keyword(key_type, lineno, linepos - 1));
+            }
+            buffer.clear();
+            return _s = state::output;
+          
+        }
+    }
+    case state::in_numb:{
+        if(isdigit(c)){
+            buffer += c;
+            return _s;
+        }else{
+            results.emplace_back(new token_number(buffer, lineno, linepos - 1));
+            buffer.clear();
+            return _s = state::output;
+        }
+    }
+    default:
+        return _s = state::unexpected_state;
+    }
+}
+
+void cmlexer::lexing_file(){
+    lexing_file(ifs);
+}
+
+void cmlexer::lexing_file(std::ifstream &local_ifs){
+    std::string buf;
+    bool next = 1;
+    std::string line;
+    while(std::getline(local_ifs, line)){
+        line += '\n';
+        for(int i=0 ; i < line.size(); ){
+            auto s = read_next(line[i], next);
+            if(!next){
+                next = 1;
+            }
+            if(error_state()){
+                std::cout << "ERROR :" << get_error_str(s) << std::endl;
+                for (char &ch : line) if (ch == '\t') ch = ' ';
+				std::cout << ' ' << line << std::flush;
+				std::cout << ' ' << std::string(get_pos() - 1, ' ') << "^" << std::endl;
+                std::cout << " " << "In the line " << get_lineno() << ", position " << get_pos() << std::endl << std::endl; reset_status();
+                return;
+            }
+            if(s == state::output){
+                auto res = this->get_result();
+                std::cout <<'#'<< res->get_line() << "\t" <<res->get_pos() << '\t' << res->to_string() << std::endl;
+                next = false;
+                continue;
+            }
+            i++; // next为false（刚进行output后则加加）
+        }
     }
 
+
+
+
+
     
-    default:
-        return state::unexpected_char; //todo
-        break;
-    }
 }

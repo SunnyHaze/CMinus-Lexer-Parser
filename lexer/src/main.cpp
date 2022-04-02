@@ -4,46 +4,46 @@
 #include "Lexer.h"
 
 // ==========全局参数定义============
-std::string input = "./test_cases/operator.cpp";
-// 此路径为空，则输出到标准输出，如果不为空，则输出到文件
+std::string input = "./test_cases/input.c";
+// outpur路径为空，则输出到标准输出，如果不为空，则输出到文件
 // std::string output = "./test_cases/output.txt";
 std::string output = "";
-cmlexer lex;
+cmlexer lex; // 初始化语法解析器类
 // ====================================
 
 // 初始化输入输出文件路径
 void initPath(){
     lex.setPath(input,output);
 }
-
-
-
 // 存放测试用的函数
 namespace tests 
 {
     // 利用简单字符串测试分析器的函数
     void testLexer(std::string str){
         bool next = true;
-        for(int i=0 ; i < str.size(); i++){
+        for(int i=0 ; i < str.size(); ){
             // printf("%c\n",str[i]);
             auto s = lex.read_next(str[i], next);
-            // std::cout << (int) s;
+            // std::cout <<"Status: " <<(int) s << std::endl;
             if(!next){
                 next = 1;
             }
             if(s == state::output){
                 auto res = lex.get_result();
                 std::cout <<'#'<< res->get_line() << "\t" <<res->get_pos() << '\t' << res->to_string() << std::endl;
+                next = false;
+                continue;
             }
+            i++; // next为false（刚进行output后则加加）
         }
     }
-    // 带行数输出原始代码——测试buffer
-    void showInputFile(){
-        char c;
-        while((c = lex.getNextChar()) != EOF){
-            std::cout << c;
-        }
-    }
+    // // 带行数输出原始代码——测试buffer
+    // void showInputFile(){
+    //     char c;
+    //     while((c = lex.getNextChar()) != EOF){
+    //         std::cout << c;
+    //     }
+    // }
     // 测试所有Token单元是否书写正确
     void showTokens(){
         token_keyword i(keyword_type::_else, 1,4);
@@ -56,19 +56,16 @@ namespace tests
         std::cout << k.to_string() << std::endl;
         std::cout << l.to_string() << std::endl;
     }
-
+    // 测试运算符解析是否正确的部分
     void operatorLexer(){
         std::string buf;
         bool next = 1;
-        std::ifstream ifs;
-        ifs.open("test_cases/operator.cpp");
         std::string a ;
         while(std::getline(lex.ifs, a)){
             a += '\n';
             // std::cout << a << std::endl;
             testLexer(a);
         }
-
     }
 }
 // 按行数显示所有的文本内容
@@ -80,8 +77,7 @@ int main(int argc, char* argv[]){
  
     // tests::showInputFile();
     // tests::showTokens();
-
-    tests::operatorLexer();
-   
+    // tests::operatorLexer();
+    lex.lexing_file(); // 默认按照内部的ifs读取数据
     return 0;
 }

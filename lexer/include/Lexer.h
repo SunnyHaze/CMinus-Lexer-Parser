@@ -4,35 +4,37 @@
 #include<cstring>
 #include<vector>
 #include<cctype>
+#include<unordered_map>
 #include<set>
 #include "TokenType.h"
-
+// 所有可能的运算符起始符号
 extern std::set<char> oper_start;
 bool isoperator(char c);
 
-// 记录当前状态
+// 词法分析器的状态机的状态
 enum class state{
-    start,   // 普通状态
-    output,  // 可以输出一个词法单元的状态
-    in_oper, // 在操作符状态
-    in_comm, // 在注释状态
-    in_numb, // 在数值状态
-    in_iden, // 在标识符状态
-    unexpected_char,
-    undefined_operator
+    start,   // 普通状态 0
+    output,  // 可以输出一个词法单元的状态 1
+    in_oper, // 在操作符状态 2
+    in_comm, // 在注释状态 3
+    in_numb, // 在数值状态 4
+    in_iden, // 在标识符状态 5
+    ex_comm, // 即将退出注释 6
+    unexpected_char, // 7 未知的字符
+    undefined_operator, // 8 未知的运算符
+    unexpected_state    // 异常状态转换
 };
 
-enum class error_state{
+// 用来管理错误类型的
+extern std::unordered_map<state, std::string> error_map;
+std::string get_error_str(state s);
 
-};
-// 定义用来判定是否是
-
+// 主要的词法分析器类
 class cmlexer{
     int bufflen = 0;
-    int lineno = 0;         // 当前行号 
+    int lineno = 1;         // 当前行号 
     int linepos = 0;        // 当前字符号 
-    std::string buffer, last_buffer;
-    int EOF_flag;       //文件尾
+    std::string buffer;
 
     state _s; //当前状态
 
@@ -50,9 +52,35 @@ public:
     void setPath(std::string i, std::string o);
     int getNextChar();
     void ungetNextChar();
+    // 
     state read_next(char c, bool next);
+    // 从输入流解析整个文件的函数，无参数为默认按照ifs读取
+    void lexing_file(std::ifstream &ifstream); 
+    void lexing_file();
+    // 获得当前最新的头部token
     token_base* get_result(){
         _s = state::start;
         return results.back();
+    }
+    inline std::string get_buffer(){
+        return buffer;
+    }
+    inline int get_lineno(){
+        return lineno;
+    }
+    inline int get_pos(){
+        return linepos;
+    }
+    // 恢复初始状态
+    void reset_status(){
+        _s = state::start;
+        buffer.clear();
+    }
+    // 查看是否错误
+    bool error_state(){
+        if(_s >= state::unexpected_char)
+            return 1;
+        else
+            return 0;
     }
 };
