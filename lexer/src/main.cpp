@@ -86,6 +86,7 @@ int main(int argc, char* argv[]){
         lex.lexing_file();
         break;
     default:
+        std::cout << "ERROR:参数过多，请确认是否只有'输入路径'、'输出路径'两个参数。"<< std::endl;
         break;
     }
 
