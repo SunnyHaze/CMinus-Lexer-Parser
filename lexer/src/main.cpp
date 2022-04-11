@@ -4,7 +4,7 @@
 #include "Lexer.h"
 
 // ==========全局参数定义============
-std::string input = "./test_cases/input.c";
+std::string input = "";
 // outpur路径为空，则输出到标准输出，如果不为空，则输出到文件
 // std::string output = "./test_cases/output.txt";
 std::string output = "";
@@ -70,6 +70,25 @@ namespace tests
 }
 // 按行数显示所有的文本内容
 int main(int argc, char* argv[]){
+    // 根据输入数据的个数来判定操作
+    switch (argc)
+    {
+    case 1: // 解析
+        std::cout << "ERROR:缺少参数，请输入需要解析的文件路径！"<< std::endl;
+        break;
+    case 2: // 如果有一个参数，则从文件路径读入，并从标准输出输出结果
+        input.assign(argv[1]);
+        lex.lexing_file();
+        break;
+    case 3:
+        input.assign(argv[1]);
+        output.assign(argv[2]);
+        lex.lexing_file();
+        break;
+    default:
+        break;
+    }
+
     initPath();
     // keyword_type key;
     // key = string2keyword("if");

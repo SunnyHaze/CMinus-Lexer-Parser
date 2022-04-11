@@ -1,21 +1,70 @@
-<invalid token>
-# 1	/* A program to perform Euclid's
-# 2	Algorithm to compute gcd. */
-# 3	
-# 4	int gcd (int u, int v)
-# 5	{
-# 6	    if (v == 0)
-# 7	        return u ;
-# 8	    else
-# 9	        return gcd(v,u-u/v*v);
-# 10	    /* u-u/v*v == u mod v */
-# 11	}
-# 12	
-# 13	void main(void)
-# 14	{
-# 15	    int x; int y;
-# 16	    x = input();
-# 17	    y = input();
-# 18	    output(gcd(x,y));
-# 19	}
-# 20	
+#4	3	Keyword:      	int
+#4	7	Identifier: 	gcd
+#4	9	Operator:   	(
+#4	12	Keyword:      	int
+#4	14	Identifier: 	u
+#4	15	Operator:   	,
+#4	19	Keyword:      	int
+#4	21	Identifier: 	v
+#4	22	Operator:   	)
+#5	1	Operator:   	{
+#6	6	Keyword:      	if
+#6	8	Operator:   	(
+#6	9	Identifier: 	v
+#6	12	Operator:   	==
+#6	14	Number:     	0
+#6	15	Operator:   	)
+#7	14	Keyword:      	return
+#7	16	Identifier: 	u
+#7	18	Operator:   	;
+#8	8	Keyword:      	else
+#9	14	Keyword:      	return
+#9	18	Identifier: 	gcd
+#9	19	Operator:   	(
+#9	20	Identifier: 	v
+#9	21	Operator:   	,
+#9	22	Identifier: 	u
+#9	23	Operator:   	-
+#9	24	Identifier: 	u
+#9	25	Operator:   	/
+#9	26	Identifier: 	v
+#9	27	Operator:   	*
+#9	28	Identifier: 	v
+#9	29	Operator:   	)
+#9	30	Operator:   	;
+#12	1	Operator:   	}
+#14	4	Keyword:      	void
+#14	9	Identifier: 	main
+#14	10	Operator:   	(
+#14	14	Keyword:      	void
+#14	15	Operator:   	)
+#15	1	Operator:   	{
+#16	7	Keyword:      	int
+#16	9	Identifier: 	x
+#16	10	Operator:   	;
+#16	14	Keyword:      	int
+#16	16	Identifier: 	y
+#16	17	Operator:   	;
+#17	5	Identifier: 	x
+#17	7	Operator:   	=
+#17	13	Identifier: 	input
+#17	14	Operator:   	(
+#17	15	Operator:   	)
+#17	16	Operator:   	;
+#18	5	Identifier: 	y
+#18	7	Operator:   	=
+#18	13	Identifier: 	input
+#18	14	Operator:   	(
+#18	15	Operator:   	)
+#18	16	Operator:   	;
+#19	10	Identifier: 	output
+#19	11	Operator:   	(
+#19	14	Identifier: 	gcd
+#19	15	Operator:   	(
+#19	16	Identifier: 	x
+#19	17	Operator:   	,
+#19	18	Identifier: 	y
+#19	19	Operator:   	)
+#19	20	Operator:   	)
+#19	21	Operator:   	;
+#20	1	Operator:   	}

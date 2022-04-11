@@ -76,7 +76,7 @@ public:
     token_keyword(keyword_type t, std::size_t l, std::size_t p): token_base(l,p), _type(t){} 
 
     std::string to_string() const override{
-        return "Keyword: \t" + keyword2string(_type);    
+        return "Keyword:      \t" + keyword2string(_type);    
     }
     token_type get_token_type() const override{
         return token_type::_keyword;
@@ -90,7 +90,7 @@ public:
     token_operator(operator_type t, std::size_t l, std::size_t p): token_base(l,p), _type(t){} 
 
     std::string to_string() const override{
-        return "Operator: \t" + operator2string(_type);    
+        return "Operator:   \t" + operator2string(_type);    
     }
     token_type get_token_type() const override{
         return token_type::_operator;
@@ -118,7 +118,7 @@ public:
     token_number(std::string number, std::size_t l, std::size_t p): token_base(l,p), _number(number){} 
 
     std::string to_string() const override{
-        return "Number: \t" + _number;    
+        return "Number:     \t" + _number;    
     }
     token_type get_token_type() const override{
         return token_type::_NUM;

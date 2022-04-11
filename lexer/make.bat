@@ -6,4 +6,4 @@ mingw32-make.exe
 echo ====================MAKE DONE===========================
 cd ..
 echo ====================Run Code============================
-.\CMinusLexer_binary.exe
+.\CMinusLexer_binary.exe  ./test_cases/input.c ./test_cases/output.txt
