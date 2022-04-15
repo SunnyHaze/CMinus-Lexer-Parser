@@ -146,37 +146,51 @@ state cmlexer::read_next(char c, bool next){
         return _s = state::unexpected_state;
     }
 }
+token_base * cmlexer::get_next_token(){
+    return get_next_token(ifs);
+}
+token_base * cmlexer::get_next_token(std::ifstream &local_ifs){
+    do{
+        if(is_eof){
+            return nullptr;
+        }else{
+            if(line_idx >= line_buff.size()){
+                if(!std::getline(local_ifs, line_buff)){
+                    is_eof = true;
+                }
+                line_idx = 0;
+                line_buff += "\n";
+                // std::cout << line_buff;
+            }
+            read_next(line_buff[line_idx], next);
+            if(!next){
+                next = 1;
+            }
+            if(error_state()){
+                std::cout << "ERROR :" << get_error_str(_s) << std::endl;
+                for (char &ch : line_buff) if (ch == '\t') ch = ' ';
+				std::cout << ' ' << line_buff << std::flush;
+				std::cout << ' ' << std::string(get_pos() - 1, ' ') << "^" << std::endl;
+                std::cout << " " << "In the line " << get_lineno() << ", position " << get_pos() << std::endl << std::endl; reset_status();
+                return nullptr;
+            }
+            if(_s == state::output){
+                next = 0;
+                return this->get_result();
+            }
+            line_idx++;
+        }
+    }while(1);
+}
 
 void cmlexer::lexing_file(){
     lexing_file(ifs);
 }
 
 void cmlexer::lexing_file(std::ifstream &local_ifs){
-    std::string buf;
-    bool next = 1;
-    std::string line;
-    while(std::getline(local_ifs, line)){
-        line += '\n';
-        for(int i=0 ; i < line.size(); ){
-            auto s = read_next(line[i], next);
-            if(!next){
-                next = 1;
-            }
-            if(error_state()){
-                std::cout << "ERROR :" << get_error_str(s) << std::endl;
-                for (char &ch : line) if (ch == '\t') ch = ' ';
-				std::cout << ' ' << line << std::flush;
-				std::cout << ' ' << std::string(get_pos() - 1, ' ') << "^" << std::endl;
-                std::cout << " " << "In the line " << get_lineno() << ", position " << get_pos() << std::endl << std::endl; reset_status();
-                return;
-            }
-            if(s == state::output){
-                auto res = this->get_result();
-                std::cout <<'#'<< res->get_line() << "\t" <<res->get_pos() << '\t' << res->to_string() << std::endl;
-                next = false;
-                continue;
-            }
-            i++; // next为false（刚进行output后则加加）
-        }
-    }  
+    token_base* res;
+    while((res = get_next_token()) != nullptr){
+        if(if_std_output)
+            std::cout <<'#'<< res->get_line() << "\t" <<res->get_pos() << '\t' << res->to_string() << std::endl;
+    }
 }

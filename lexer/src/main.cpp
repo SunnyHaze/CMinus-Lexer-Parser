@@ -70,6 +70,7 @@ namespace tests
 }
 // 按行数显示所有的文本内容
 int main(int argc, char* argv[]){
+    lex.if_std_output = true; // 是否在标准输出展示结果
     // 根据输入数据的个数来判定操作
     switch (argc)
     {
@@ -78,19 +79,19 @@ int main(int argc, char* argv[]){
         break;
     case 2: // 如果有一个参数，则从文件路径读入，并从标准输出输出结果
         input.assign(argv[1]);
+        initPath();
         lex.lexing_file();
         break;
     case 3:
         input.assign(argv[1]);
         output.assign(argv[2]);
+        initPath();
         lex.lexing_file();
         break;
     default:
         std::cout << "ERROR:参数过多，请确认是否只有'输入路径'、'输出路径'两个参数。"<< std::endl;
         break;
     }
-
-    initPath();
     // keyword_type key;
     // key = string2keyword("if");
     // std::cout << keyword2string(key) << std::endl;
@@ -98,6 +99,12 @@ int main(int argc, char* argv[]){
     // tests::showInputFile();
     // tests::showTokens();
     // tests::operatorLexer();
-    lex.lexing_file(); // 默认按照内部的ifs读取数据
+    // lex.lexing_file(); // 默认按照内部的ifs读取数据
+
+    // 最后一总从信息中输出
+    // for(auto i : lex.results){
+    //     std::cout << '#' << i->get_line() << "\t" << i->get_pos() << "\t" << i->to_string() << std::endl;
+    // }
+
     return 0;
 }
