@@ -54,12 +54,14 @@ public:
 
     //设置存取路径
     void setPath(std::string i, std::string o);
+private:
     int getNextChar();
     void ungetNextChar();
     // 
     state read_next(char c, bool next);
 
     //获取下一个token元素
+public:
     token_base * get_next_token();
     token_base * get_next_token(std::ifstream &local_ifs);
 

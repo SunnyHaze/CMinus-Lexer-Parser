@@ -3,7 +3,12 @@
 extern const int MAX_TOKEN_SIZE;
 extern char TokenString[];
 extern int TokenIndex;
-// 定义CMinus所需的4中不同的token类型
+/* 定义CMinus所需的4中不同的token类型
+_keyword
+_operator
+_ID
+_NUM
+*/
 enum class token_type{
     _null,
     _keyword,   // 关键字类型
@@ -12,7 +17,9 @@ enum class token_type{
     _NUM,       // 数值类型
 };
 
-// 定义子类型——关键字
+/* 定义子类型——关键字
+_null, _if, _else, _int, _return, _void, _while
+*/
 enum class keyword_type{
     // 字如其名的转义
     _null, _if, _else, _int, _return, _void, _while, 
@@ -22,6 +29,27 @@ keyword_type string2keyword(std::string str);
 std::string keyword2string(keyword_type key);
 
 // 定义子类型——运算符类型
+//     _null,
+//     _comment, // /*
+//     _add, // + 
+//     _sub, // -
+//     _mul, // * 
+//     _div, // /
+//     _les, // <
+//     _leq, // <= less equal
+//     _gre, // >
+//     _geq, // >= greater equal
+//     _equ, // == equal
+//     _neq, // != not equal
+//     _asi, // =
+//     _sem, // ; semicolon
+//     _com, // ,
+//     _slb, // ( small left bracket
+//     _srb, // ) smal right bracket
+//     _mlb, // [ medium left bracket
+//     _mrb, // ] medius rigth bracket
+//     _llb, // { large left bracket
+//     _lrb, // } large right bracket
 enum class operator_type{
     _null,
     _comment, // /*
@@ -76,8 +104,13 @@ public:
     token_keyword(keyword_type t, std::size_t l, std::size_t p): token_base(l,p), _type(t){} 
 
     std::string to_string() const override{
-        return "Keyword:      \t" + keyword2string(_type);    
+        return "Keyword:      \t" + keyword2string(_type);
     }
+    // 返回keyword类型
+    keyword_type get_type() const{
+        return _type;
+    }
+    // 返回token类型（keyword）
     token_type get_token_type() const override{
         return token_type::_keyword;
     }
@@ -88,7 +121,9 @@ class  token_operator final : public token_base {
 public:
     ~token_operator() = default;
     token_operator(operator_type t, std::size_t l, std::size_t p): token_base(l,p), _type(t){} 
-
+    operator_type get_operator_type(){
+        return _type;
+    }
     std::string to_string() const override{
         return "Operator:   \t" + operator2string(_type);    
     }
@@ -102,7 +137,9 @@ class  token_identifier final : public token_base {
 public:
     ~token_identifier() = default;
     token_identifier(std::string id, std::size_t l, std::size_t p): token_base(l,p), _ID(id){} 
-
+    std::string get_ID() const{
+        return _ID;
+    }
     std::string to_string() const override{
         return "Identifier: \t" + _ID;   
     }
@@ -116,7 +153,9 @@ class  token_number final : public token_base {
 public:
     ~token_number() = default;
     token_number(std::string number, std::size_t l, std::size_t p): token_base(l,p), _number(number){} 
-
+    std::string get_number() const {
+        return _number;
+    }
     std::string to_string() const override{
         return "Number:     \t" + _number;    
     }
