@@ -6,17 +6,18 @@ class cmparser;
 
 const int MAXCHILDREN = 3;
 enum class Node_type{
-    _expK,
-    _var,
-    _var_declaration,
-    _expression,
-    _simple_expression,
-    _additive_expression,
+    _expK, // 表达式类型
+    _stmt, // 语句类型
 };
 // 区分表达式的类型的枚举类型
 // _opK 运算符表达式   
 // _constK, 常量表达式    
 // _idK, 标识符
+enum class StmtKind{
+    _return_stmt,   // 返回语句
+    _selection_stmt,// 分支语句
+    _iteration_stmt,// 循环语句
+};
 enum class ExpKind{
     _assign,     // 赋值语句
     _simple_exp, // 简单表达式
@@ -46,6 +47,7 @@ public:
     // 具体到节点内的类型、什么表达式或什么stmt
     union {
         ExpKind exp;
+        StmtKind stmt;
     } kind;
     // 如果是Exp
     union {
@@ -54,17 +56,22 @@ public:
         int num;
         char * id;
     } attr;
-    // 返回一个表达式节点
+    // 生成一个表达式节点并返回
     static TreeNode * newExpNode(ExpKind kind){
         TreeNode * p = new TreeNode();
-        if(p == nullptr){
-            std::cout << "Error: Out of memory!" << std::endl;
-            return nullptr;
-        }
         p->_type = Node_type::_expK;
         for(auto &i : p->child) i = nullptr;
         p->sibling = nullptr;
         p->kind.exp = kind;
+        return p;
+    }
+    // 生成一个语句节点并返回
+    static TreeNode * newStmtNode(StmtKind kind){
+        TreeNode * p = new TreeNode();
+        p->_type = Node_type::_expK;
+        for(auto &i : p->child) i = nullptr;
+        p->sibling = nullptr;
+        p->kind.stmt = kind;
         return p;
     }
     // 设置运算符表达式中的运算符类型

@@ -107,7 +107,7 @@ public:
         return "Keyword:      \t" + keyword2string(_type);
     }
     // 返回keyword类型
-    keyword_type get_type() const{
+    keyword_type get_keyword_type() const{
         return _type;
     }
     // 返回token类型（keyword）

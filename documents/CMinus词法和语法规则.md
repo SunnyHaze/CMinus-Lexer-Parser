@@ -25,11 +25,11 @@ Digit = 0|..|9
 10. compound_stmt -> { local_declarations statement_list }
 11. local_declarations -> local_declarations var_declaration  |  empty
 12. statement_list -> statement_list statement  |  empty
-13. statement -> expression_stmt  |  compound_stmt  |  selection_stmt  |  iteration_stmt  |  return_stmt
-14. expression_stmt -> expression ;  |  ;
-15. selection_stmt -> IF ( expression ) statement  |  IF ( expression ) statement ELSE statement
-16. iteration_stmt -> WHILE ( expression ) statement
-17. return_stmt -> RETURN  |  RETURN expression 
+13. ❤statement -> expression_stmt  |  compound_stmt  |  selection_stmt  |  iteration_stmt  |  return_stmt
+14. ❤expression_stmt -> expression ;  |  ;
+15. ❤selection_stmt -> IF ( expression ) statement  |  IF ( expression ) statement ELSE statement
+16. ❤iteration_stmt -> WHILE ( expression ) statement
+17. ❤return_stmt -> RETURN;  |  RETURN expression; 
 18. ❤expression -> var = expression  |  simple_expression
 19. ❤var -> ID  |  ID [ expression ]
 20. ❤simple_expression -> additive_expression relop additive_expression  |  additive_expression

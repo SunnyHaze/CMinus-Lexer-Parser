@@ -41,6 +41,121 @@ public:
         }
     }
 private: 
+
+    TreeNode * compound_stmt(){
+        //todo
+    }
+    TreeNode * statement(){
+        TreeNode * t = nullptr;
+        if(current_token != nullptr){
+            switch (get_current_token_type())
+            {
+            case token_type::_keyword :
+                switch (get_current_keyword()->get_keyword_type())
+                {
+                case keyword_type::_if:
+                    t = selection_stmt();
+                break;
+                
+                case keyword_type::_while:
+                    t = iteration_stmt();
+                break;
+
+                case keyword_type::_return:
+                    t = return_stmt();
+                break;  
+                default:
+                    SyntaxError("语句中出现了非法的关键字！");
+                    get_next_token();
+                    break;
+                }
+                break;
+            
+            case token_type::_ID: case token_type::_NUM:
+                t = expression_stmt();
+                break;
+
+            case token_type::_operator:
+                switch (get_current_operator()->get_operator_type())
+                {
+                // 匹配 '{'
+                case operator_type::_llb :
+                    t = compound_stmt();
+                    break;
+                case operator_type::_sem: case operator_type::_slb:
+                    t = expression_stmt();
+                    break;        
+
+                default:
+                    SyntaxError("语句中出现了非法的运算符！");
+                    get_next_token();
+                    break;
+                }
+                break;
+            default:
+                SyntaxError("语句中出现了非法的token类型！");
+                get_next_token();
+                break;
+            }
+        }
+        return t;
+    }
+
+    //expression_stmt -> expression ; | ;
+    TreeNode* expression_stmt(){
+        TreeNode *t = nullptr;
+        if(current_token != nullptr && get_current_token_type() == token_type::_operator && get_current_operator()->get_operator_type() == operator_type::_sem){
+            match_operator(operator_type::_sem);
+            //TODO 有可能返回空指针会炸
+        }else{
+            t = expression();
+        }
+        return t;
+    }
+    //selection_stmt -> IF ( expression ) statement | IF ( expression ) statement ELSE statement
+    TreeNode * selection_stmt(){
+        auto t = TreeNode::newStmtNode(StmtKind::_selection_stmt);
+        // match if
+        match_keyword(keyword_type::_if);
+        // match (
+        match_operator(operator_type::_slb);
+        t->child[0] = expression();
+        // match )
+        match_operator(operator_type::_srb);
+        t->child[1] = statement();
+        if(current_token != nullptr && get_current_token_type() == token_type::_keyword && get_current_keyword()->get_keyword_type() == keyword_type::_else){
+            match_keyword(keyword_type::_else);
+            t->child[2] = statement();
+        }
+        return t;
+    }
+    // iteration_stmt -> WHILE ( expression ) statement
+    TreeNode * iteration_stmt(){
+        auto t = TreeNode::newStmtNode(StmtKind::_iteration_stmt);
+        // match while
+        match_keyword(keyword_type::_while);
+        // match (
+        match_operator(operator_type::_slb);
+        t->child[0] = expression();
+        // match )
+        match_operator(operator_type::_srb);
+        t->child[1] = statement();
+        return t;
+    }
+
+    TreeNode * return_stmt(){
+        auto t = TreeNode::newStmtNode(StmtKind::_return_stmt);
+        match_keyword(keyword_type::_return);
+        // 匹配 ';'
+        if(current_token != nullptr && get_current_token_type() == token_type::_operator && get_current_operator()->get_operator_type() == operator_type::_sem){
+            match_operator(operator_type::_sem);
+        }else{
+            t->child[0] = expression();
+            match_operator(operator_type::_sem);
+        }
+        return t;
+    }
+
     TreeNode * expression(){
         std::cout << "expression" << std::endl;
         TreeNode *t = var();
