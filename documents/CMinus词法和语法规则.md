@@ -13,18 +13,18 @@ Digit = 0|..|9
 
 ## C-Minus 的语法规则
 **C-Minus 的 BNF 语法如下：**
-1. program -> declaration_list
-2. declaration_list -> declaration_list declaration  |  declaration
-3. declaration -> var_declaration  |  fun_declaration
-4. var_declaration -> type_specifier ID  |  type_specifier ID [ NUM ] 
-5. type_specifier -> INT  |  VOID
-6. fun_declaration -> type_specifier ID ( params )  compound_stmt
-7. params -> param_list  |  VOID
-8. param_list -> param_list , param  |  param
-9. param -> type_specifier ID  |  type_specifier ID [ ]
-10. compound_stmt -> { local_declarations statement_list }
-11. local_declarations -> local_declarations var_declaration  |  empty
-12. statement_list -> statement_list statement  |  empty
+1. ❤program -> declaration_list
+2. ❤declaration_list -> declaration_list declaration  |  declaration
+3. ❤declaration -> var_declaration  |  fun_declaration
+4. ❤var_declaration -> type_specifier ID  |  type_specifier ID [ NUM ] 
+5. ❤type_specifier -> INT  |  VOID
+6. ❤fun_declaration -> type_specifier ID ( params )  compound_stmt
+7. ❤params -> param_list  |  VOID
+8. ❤param_list -> param_list , param  |  param
+9. ❤param -> type_specifier ID  |  type_specifier ID [ ]
+10. ❤compound_stmt -> { local_declarations statement_list }
+11. ❤local_declarations -> local_declarations var_declaration  |  empty
+12. ❤statement_list -> statement_list statement  |  empty
 13. ❤statement -> expression_stmt  |  compound_stmt  |  selection_stmt  |  iteration_stmt  |  return_stmt
 14. ❤expression_stmt -> expression ;  |  ;
 15. ❤selection_stmt -> IF ( expression ) statement  |  IF ( expression ) statement ELSE statement

@@ -65,12 +65,12 @@ void cmparser::SyntaxError(std::string error_string){
 
 bool cmparser::match_keyword(keyword_type t){
     // 匹配成功，读入下一个字符
-    if(get_current_token()->get_token_type() == token_type::_keyword && ((token_keyword*) current_token)->get_type() == t){
+    if(get_current_token()->get_token_type() == token_type::_keyword && ((token_keyword*) current_token)->get_keyword_type() == t){
         get_next_token();
         return 1;
     }
     else{
-        std::cout << ">>>Error: Unexpected token type -->  " << get_current_token()->to_string() << std::endl;
+         SyntaxError(" Unexpected token type -->  " +  get_current_token()->to_string()  + "\n    Should be ->" + keyword2string(t) + "    \n");
         error_state = 1;
         return 0;
     }
@@ -82,7 +82,7 @@ bool cmparser::match_operator(operator_type t){
         return 1;
     }
     else{
-        std::cout << ">>>Error: Unexpected token type -->  " << get_current_token()->to_string() << std::endl;
+        SyntaxError(" Unexpected token type -->  " +  get_current_token()->to_string()  + "\n    Should be -> '" + operator2string(t) + "'\n   ");
         error_state = 1;
         return 0;
     }
