@@ -39,7 +39,7 @@ Digit = 0|..|9
 24. ❤term -> term mulop factor  |  factor
 25. ❤mulop -> *  |  /
 26. ❤factor -> ( expression )  |  var  |  call  |  NUM         
-27. ❤call -> ID ( args )                                      
+27. ❤call -> ID ( args )  
 28. ❤args -> arg_list  |  empty                               
 29. ❤arglist -> arg_list , expression  |  expression
 

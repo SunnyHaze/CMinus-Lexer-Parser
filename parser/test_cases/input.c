@@ -4,7 +4,7 @@ Algorithm to compute gcd. */
 int gcd (int u, int v)
 { 
     if (v == 0)
-        return u ;
+        return u;
     else
         return gcd(v,u-u/v*v);
     /* u-u/v*v ==

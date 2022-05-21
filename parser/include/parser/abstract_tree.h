@@ -120,7 +120,16 @@ public:
         strcpy(attr.id, id_string.c_str());
     }
     void to_string(){
-        std::cout << "<";
+        switch (_type)
+        {
+        case Node_type::_stmtK:
+            std:: cout << "\033[1;34;40m<";
+            break;
+        case Node_type::_expK:
+            std:: cout << "\033[1;35;40m<";
+            break;
+        }
+
         switch (_type)
         {
         case Node_type::_stmtK:
@@ -218,7 +227,7 @@ public:
         default:
             break;
         }
-        std::cout <<"> (" <<lineno  << ")" << std::endl;
+        std::cout <<">\033[0m (" <<lineno  << ")" << std::endl;
     }
     void debug_dfs(int layer){
         for(int i = 0 ; i < MAXCHILDREN ; i++){
